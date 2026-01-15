@@ -354,16 +354,18 @@ export default function DetectPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white flex">
+    <div className="min-h-screen text-white flex hero-background">
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1400px] h-[1400px] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.06)_0%,transparent_60%)]" />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.05)_0%,transparent_60%)]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.05)_0%,transparent_60%)]" />
+        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1400px] h-[1400px] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.35)_0%,rgba(139,92,246,0.25)_40%,transparent_70%)] blur-3xl" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[900px] h-[900px] bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.32)_0%,rgba(168,85,247,0.22)_40%,transparent_70%)] blur-3xl" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[900px] h-[900px] bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.32)_0%,rgba(14,165,233,0.22)_40%,transparent_70%)] blur-3xl" />
+        <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(236,72,153,0.25)_0%,transparent_60%)] blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,0.28)_0%,transparent_60%)] blur-2xl" />
         <div 
-          className="absolute inset-0 opacity-[0.015]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.8) 1px, transparent 0)`,
+            backgroundSize: '50px 50px'
           }}
         />
       </div>
@@ -372,7 +374,7 @@ export default function DetectPage() {
       <video ref={uploadedVideoRef} src={uploadedVideo || undefined} className="hidden" playsInline onEnded={() => setVideoPlaying(false)} />
       <input type="file" ref={fileInputRef} className="hidden" accept="video/*" onChange={handleVideoUpload} />
 
-      <aside className="relative z-20 w-80 border-r border-white/[0.06] bg-[#050508]/80 backdrop-blur-2xl p-6 flex flex-col">
+      <aside className="relative z-20 w-80 border-r border-white/[0.08] bg-[#050508]/60 backdrop-blur-2xl p-6 flex flex-col">
         <Link href="/" className="flex items-center gap-4 mb-10">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-violet-500 rounded-xl blur-lg opacity-40" />
@@ -400,35 +402,35 @@ export default function DetectPage() {
             </span>
           </motion.button>
 
-          <button onClick={resetStats} className="w-full py-4 bg-white/[0.03] border border-white/[0.08] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300">
+          <button onClick={resetStats} className="w-full py-4 bg-white/[0.04] border border-white/[0.10] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.08] hover:border-cyan-500/30 transition-all duration-300 shadow-lg shadow-black/20">
             <RefreshCw size={18} /> Reset Tracking
           </button>
 
-          <button onClick={() => fileInputRef.current?.click()} className="w-full py-4 bg-white/[0.03] border border-white/[0.08] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300">
+          <button onClick={() => fileInputRef.current?.click()} className="w-full py-4 bg-white/[0.04] border border-white/[0.10] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 shadow-lg shadow-black/20">
             <Upload size={18} /> Upload Video
           </button>
 
           {uploadedVideo && (
-            <div className="p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-xl">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-cyan-400 font-medium flex items-center gap-2"><Video size={16} /> Video loaded</span>
-                <button onClick={removeVideo} className="text-white/50 hover:text-rose-400 transition"><X size={16} /></button>
+            <div className="p-5 bg-gradient-to-br from-cyan-500/15 to-violet-500/10 border border-cyan-500/30 rounded-xl shadow-lg shadow-cyan-500/10">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-cyan-300 font-semibold flex items-center gap-2"><Video size={16} /> Video Ready</span>
+                <button onClick={removeVideo} className="text-white/50 hover:text-rose-400 transition-colors p-1 hover:bg-rose-500/10 rounded"><X size={18} /></button>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => setInputMode('video')} className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${inputMode === 'video' ? 'bg-gradient-to-r from-cyan-500 to-violet-500 text-white' : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.1]'}`}>Video</button>
-                <button onClick={() => setInputMode('camera')} className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${inputMode === 'camera' ? 'bg-gradient-to-r from-cyan-500 to-violet-500 text-white' : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.1]'}`}>Camera</button>
+              <div className="flex gap-3">
+                <button onClick={() => setInputMode('video')} className={`flex-1 py-2.5 text-sm rounded-lg font-semibold transition-all ${inputMode === 'video' ? 'bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg' : 'bg-white/[0.08] text-white/60 hover:bg-white/[0.15] hover:text-white'}`}>Video</button>
+                <button onClick={() => setInputMode('camera')} className={`flex-1 py-2.5 text-sm rounded-lg font-semibold transition-all ${inputMode === 'camera' ? 'bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg' : 'bg-white/[0.08] text-white/60 hover:bg-white/[0.15] hover:text-white'}`}>Camera</button>
               </div>
             </div>
           )}
 
-          <button className="w-full py-4 bg-white/[0.03] border border-white/[0.08] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300">
+          <button className="w-full py-4 bg-white/[0.04] border border-white/[0.10] rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-white/[0.08] hover:border-emerald-500/30 transition-all duration-300 shadow-lg shadow-black/20">
             <BarChart3 size={18} /> Analytics
           </button>
         </div>
 
-        <div className="pt-6 border-t border-white/[0.06] space-y-4">
-          <div className={`py-3 px-4 rounded-xl text-sm font-medium flex items-center gap-3 ${detectorReady ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-white/[0.03] border border-white/[0.08] text-white/50'}`}>
-            <div className={`w-2.5 h-2.5 rounded-full ${detectorReady ? 'bg-emerald-400 animate-pulse' : 'bg-white/30'}`} />
+        <div className="pt-6 border-t border-white/[0.08] space-y-4">
+          <div className={`py-3 px-4 rounded-xl text-sm font-semibold flex items-center gap-3 shadow-lg ${detectorReady ? 'bg-gradient-to-r from-emerald-500/30 to-teal-500/25 border border-emerald-500/40 text-emerald-100 shadow-emerald-500/20' : 'bg-white/[0.04] border border-white/[0.10] text-white/50'}`}>
+            <div className={`w-3 h-3 rounded-full ${detectorReady ? 'bg-emerald-400 shadow-lg shadow-emerald-400/50' : 'bg-white/30'}`} />
             {detectorReady ? 'AI Model Ready' : 'Loading AI...'}
           </div>
           {user && (
@@ -443,12 +445,12 @@ export default function DetectPage() {
       <main className="relative z-10 flex-1 p-8 flex flex-col lg:flex-row gap-8">
         <section className="flex-1 flex items-center justify-center">
           <div className="relative w-full max-w-[800px] aspect-[4/3]">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-violet-500/10 to-fuchsia-500/20 rounded-3xl blur-2xl opacity-30" />
-            <div className="relative h-full bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/[0.08] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/35 via-violet-500/25 to-fuchsia-500/35 rounded-3xl blur-3xl opacity-50" />
+            <div className="relative h-full bg-gradient-to-br from-[#1e293b]/90 via-[#0f172a]/85 to-[#1e293b]/90 backdrop-blur-xl border border-white/[0.15] rounded-3xl overflow-hidden shadow-2xl">
               <canvas ref={canvasRef} width={640} height={480} className="w-full h-full object-contain" />
               {(cameraActive || videoActive) && (
-                <div className="absolute top-5 left-5 flex items-center gap-2 px-4 py-2 bg-rose-500/20 backdrop-blur-xl border border-rose-500/30 rounded-full text-sm text-rose-400 font-semibold">
-                  <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" /> {inputMode === 'camera' ? 'LIVE' : 'VIDEO'}
+                <div className="absolute top-5 left-5 flex items-center gap-2 px-4 py-2.5 bg-rose-500/40 backdrop-blur-xl border border-rose-500/60 rounded-full text-sm text-white font-bold shadow-lg shadow-rose-500/20">
+                  <span className="w-2.5 h-2.5 bg-rose-400 rounded-full shadow-lg shadow-rose-400/50" /> {inputMode === 'camera' ? 'LIVE' : 'VIDEO'}
                 </div>
               )}
             </div>
@@ -483,16 +485,16 @@ export default function DetectPage() {
             <div className="absolute inset-[1px] bg-[#0a0a0f]/90 rounded-[15px]" />
             <div className="relative p-6">
               <h3 className="text-violet-400 font-semibold mb-4 flex items-center gap-2"><Zap size={18} /> Performance</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 {[
                   { label: 'FPS', value: fps.toFixed(1), icon: <Zap size={14} />, gradient: 'from-cyan-400 to-cyan-600' },
                   { label: 'Latency', value: `${processingTime.toFixed(0)}ms`, icon: <Clock size={14} />, gradient: 'from-violet-400 to-violet-600' },
                   { label: 'Frames', value: framesProcessed, icon: <Activity size={14} />, gradient: 'from-emerald-400 to-emerald-600' },
                   { label: 'Gestures', value: gesturesDetected, icon: <Hand size={14} />, gradient: 'from-amber-400 to-amber-600' },
                 ].map((s, i) => (
-                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
-                    <div className={`text-xs flex items-center gap-1.5 mb-2 bg-gradient-to-r ${s.gradient} bg-clip-text text-transparent font-medium`}>{s.icon} {s.label}</div>
-                    <div className="text-2xl font-bold font-mono">{s.value}</div>
+                  <div key={i} className="bg-white/[0.05] border border-white/[0.10] rounded-xl p-4 hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300 shadow-lg shadow-black/10">
+                    <div className={`text-xs flex items-center gap-1.5 mb-2.5 bg-gradient-to-r ${s.gradient} bg-clip-text text-transparent font-semibold`}>{s.icon} {s.label}</div>
+                    <div className="text-2xl font-bold font-mono text-white">{s.value}</div>
                   </div>
                 ))}
               </div>
@@ -504,19 +506,19 @@ export default function DetectPage() {
             <div className="absolute inset-[1px] bg-[#0a0a0f]/90 rounded-[15px]" />
             <div className="relative p-6 flex flex-col flex-1 overflow-hidden">
               <h3 className="text-emerald-400 font-semibold mb-4 flex items-center gap-2"><Activity size={18} /> History</h3>
-              <div className="flex-1 overflow-y-auto space-y-2">
+              <div className="flex-1 overflow-y-auto space-y-3">
                 <AnimatePresence>
                   {recentGestures.map((g, i) => (
-                    <motion.div key={`${g.timestamp}-${i}`} className="flex items-center gap-3 p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl" initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-                      <span className="text-2xl">{gestureEmojis[g.type]}</span>
+                    <motion.div key={`${g.timestamp}-${i}`} className="flex items-center gap-3 p-3.5 bg-white/[0.05] border border-white/[0.10] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300 shadow-lg shadow-black/10" initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
+                      <span className="text-3xl">{gestureEmojis[g.type]}</span>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold truncate">{gestureNames[g.type]}</div>
-                        <div className="text-xs text-white/40">{g.hand} • {(g.confidence * 100).toFixed(0)}%</div>
+                        <div className="text-sm font-bold truncate text-white">{gestureNames[g.type]}</div>
+                        <div className="text-xs text-white/50 font-medium">{g.hand} • {(g.confidence * 100).toFixed(0)}%</div>
                       </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                {recentGestures.length === 0 && <div className="text-center text-white/30 py-8 text-sm">No history yet</div>}
+                {recentGestures.length === 0 && <div className="text-center text-white/30 py-10 text-sm">No history yet</div>}
               </div>
             </div>
           </div>

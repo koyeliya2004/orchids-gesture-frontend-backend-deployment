@@ -31,8 +31,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const protectedRoutes = ['/detect'];
-  const authRoutes = ['/login', '/signup'];
+  // Auth pages temporarily disabled for dev — no protected routes enforced.
+  const protectedRoutes: string[] = [];
+  const authRoutes: string[] = [];
 
   if (!user && protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
     const url = request.nextUrl.clone();

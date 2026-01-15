@@ -1,0 +1,23 @@
+nohup: ignoring input
+
+> app@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.3.5 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://10.0.2.220:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 1384ms
+ ✓ Ready in 3.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 11.4s
+ GET / 200 in 11848ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1187ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 1489ms
+ GET / 200 in 441ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 237ms
+ ✓ Compiled in 716ms

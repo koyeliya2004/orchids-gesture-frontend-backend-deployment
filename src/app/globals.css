@@ -10,8 +10,8 @@
   --color-accent: #00ff88;
   --color-warning: #ffaa00;
   --color-error: #ff3366;
-  --color-bg-dark: #0a0a0f;
-  --color-bg-darker: #050508;
+  --color-bg-dark: #1e293b;
+  --color-bg-darker: #0f172a;
   --color-bg-glass: rgba(255, 255, 255, 0.05);
   --color-bg-glass-hover: rgba(255, 255, 255, 0.08);
   --border-glass: 1px solid rgba(255, 255, 255, 0.1);
@@ -49,14 +49,15 @@ html, body {
 
 body {
   font-family: var(--font-primary);
-  background: var(--color-bg-darker);
   color: #ffffff;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  background-color: var(--color-bg-darker);
 }
 
+/* soft multi-color glows (large) behind content */
 body::before {
   content: '';
   position: fixed;
@@ -64,13 +65,103 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
-  animation: backgroundPulse 10s ease-in-out infinite;
-  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(10, 132, 255, 0.2) 0%, transparent 30%),
+    radial-gradient(circle at 10% 60%, rgba(139, 92, 246, 0.2) 0%, transparent 30%),
+    radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.2) 0%, transparent 30%);
+  z-index: -2;
+  filter: blur(30px);
+  opacity: 0.95;
 }
+
+/* star field + subtle dot grid and film grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
+    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.6));
+  background-size: 160px 160px, 48px 48px, 100% 100%;
+  background-position: 0 0, 30px 30px, 0 0;
+  mix-blend-mode: screen;
+  opacity: 1.0;
+  filter: blur(0.6px);
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.85; transform: translateY(0); }
+  50% { opacity: 0.95; transform: translateY(0.5px); }
+  100% { opacity: 0.85; transform: translateY(0); }
+}
+
+/* Hero image helper
+   Place your provided background image at: public/gesture-bg.jpg
+   (filename must be exactly gesture-bg.jpg). */
+.hero-background {
+  position: relative;
+  /* prefer a provided image at public/image.png (uploaded by user) */
+  background-image: url('/image.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  will-change: transform;
+}
+
+.hero-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8,10,16,0.22) 0%, rgba(8,10,16,0.6) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.hero-content-wrapper { position: relative; z-index: 20; }
+
+/* Background pan for slight motion */
+@keyframes bg-pan {
+  0% { background-position: center 40%; }
+  50% { background-position: center 60%; }
+  100% { background-position: center 40%; }
+}
+.hero-background {
+  animation: bg-pan 30s linear infinite;
+}
+
+/* subtle scanline that moves across hero for tech effect */
+.hero-background .scanline {
+  position: absolute;
+  left: -30%;
+  top: 50%;
+  width: 160%;
+  height: 120px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(-12deg) translateY(-50%);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  animation: scan 8s linear infinite;
+}
+@keyframes scan {
+  0% { transform: translateX(-100%) rotate(-12deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateX(100%) rotate(-12deg); opacity: 0; }
+}
+
+/* floating bob for CTA */
+@keyframes bob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+.floating-bob { animation: bob 3.6s ease-in-out infinite; }
 
 @keyframes backgroundPulse {
   0%, 100% { opacity: 0.5; transform: scale(1); }
