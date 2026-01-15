@@ -1,0 +1,267 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Upload, X, File, CheckCircle, AlertCircle } from 'lucide-react';
+import { apiService } from '@/lib/api-service';
+import { validateVideoFile } from '@/lib/permissions';
+import { UploadState } from '@/types/gesture';
+import type { VideoUploadResponse } from '@/types/gesture';
+
+interface VideoUploadModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onUploadSuccess?: (response: VideoUploadResponse) => void;
+}
+
+export function VideoUploadModal({
+  isOpen,
+  onClose,
+  onUploadSuccess,
+}: VideoUploadModalProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadState, setUploadState] = useState<UploadState>(UploadState.IDLE);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleFileSelect = (file: File) => {
+    const validation = validateVideoFile(file, 100, ['.mp4', '.avi', '.webm', '.mov']);
+    
+    if (!validation.valid) {
+      setError(validation.error || 'Invalid file. Please check file format and size.');
+      return;
+    }
+
+    setSelectedFile(file);
+    setError(null);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    setUploadState(UploadState.UPLOADING);
+    setError(null);
+    setUploadProgress(0);
+
+    try {
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      const response = await apiService.uploadVideo(selectedFile);
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      setUploadState(UploadState.COMPLETED);
+      
+      if (onUploadSuccess) {
+        onUploadSuccess(response);
+      }
+
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+      
+    } catch (err) {
+      setUploadState(UploadState.FAILED);
+      const errorMsg = err instanceof Error 
+        ? err.message 
+        : 'Upload failed. Please check your network connection and try again.';
+      setError(errorMsg);
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedFile(null);
+    setUploadState(UploadState.IDLE);
+    setUploadProgress(0);
+    setError(null);
+    onClose();
+  };
+
+  const getStatusMessage = () => {
+    switch (uploadState) {
+      case UploadState.UPLOADING:
+        return 'Uploading video to server...';
+      case UploadState.PROCESSING:
+        return 'Processing video...';
+      case UploadState.COMPLETED:
+        return 'Upload successful!';
+      case UploadState.FAILED:
+        return error || 'Upload failed';
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            className="modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+          />
+
+          <motion.div
+            className="modal-container"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: 'spring', duration: 0.5 }}
+          >
+            <div className="modal-content glass-card">
+              <div className="modal-header">
+                <h2>Upload Video</h2>
+                <button className="close-btn" onClick={handleClose}>
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                {!selectedFile ? (
+                  <div
+                    className={`upload-area ${isDragging ? 'dragging' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload size={48} />
+                    <h3>Drop video here or click to browse</h3>
+                    <p>Supports MP4, AVI, WebM, MOV (Max 100MB)</p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="video/mp4,video/avi,video/webm,video/quicktime"
+                      onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+                ) : (
+                  <div className="file-selected">
+                    <div className="file-info">
+                      <File size={48} />
+                      <div className="file-details">
+                        <h3>{selectedFile.name}</h3>
+                        <p>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+
+                    {uploadState === UploadState.UPLOADING && (
+                      <div className="upload-progress">
+                        <div className="progress-bar-container">
+                          <motion.div
+                            className="progress-bar"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${uploadProgress}%` }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </div>
+                        <p>{uploadProgress}%</p>
+                        <span className="upload-status">{getStatusMessage()}</span>
+                      </div>
+                    )}
+
+                    {uploadState === UploadState.COMPLETED && (
+                      <motion.div
+                        className="success-message"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <CheckCircle size={24} />
+                        <span>{getStatusMessage()}</span>
+                      </motion.div>
+                    )}
+
+                    {uploadState === UploadState.FAILED && error && (
+                      <motion.div
+                        className="error-message"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <AlertCircle size={24} />
+                        <div className="error-content">
+                          <span className="error-title">Upload Failed</span>
+                          <span className="error-detail">{error}</span>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {uploadState === UploadState.IDLE && (
+                      <div className="file-actions">
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleUpload}
+                        >
+                          Upload
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={() => setSelectedFile(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+
+                    {uploadState === UploadState.FAILED && (
+                      <div className="file-actions">
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleUpload}
+                        >
+                          Retry Upload
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setUploadState(UploadState.IDLE);
+                            setError(null);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
